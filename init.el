@@ -74,6 +74,10 @@
       (insert "不正解だ。練習したまえ。"))))
 
 (defun anzan-loop (keta kaisu second)
+  (interactive "n桁数:\nn回数:\nn表示時間:(s/number)")
+  (anzan keta kaisu second)
+  (message "Please press Enter(or any keys) to continue...")
+  (read-char)
   (anzan-loop keta kaisu second))
 
 (global-display-line-numbers-mode 1)
