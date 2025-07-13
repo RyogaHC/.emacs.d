@@ -54,8 +54,10 @@
  ;; If there is more than one, they won't work right.
  )
 
+(random t)
+
 (defun generate-random (keta)
-  (random (1- (expt 10 keta))))
+  (+ (random (- (* 9 (expt 10 (- keta 1))) 1)) (expt 10 (- keta 1))))
 
 (defun anzan (keta kaisu second)
   (interactive "n桁数:\nn回数:\nn表示時間:(s/number)")
@@ -64,14 +66,15 @@
 	 (buf (get-buffer-create "Anzan")))
     (switch-to-buffer buf)
     (erase-buffer)
+    (sit-for 1)
     (dolist (random-number random-list)
       (insert (int-to-string random-number))
       (sit-for second)
       (erase-buffer)
-      (sit-for 0.1))
+      (sit-for 0.05))
     (if (= (read-number "答え:") sum)
       (insert "正解")
-      (insert "不正解だ。練習したまえ。"))))
+      (insert (format "不正解だ。練習したまえ。(正解は「%d」)" sum)))))
 
 (defun anzan-loop (keta kaisu second)
   (interactive "n桁数:\nn回数:\nn表示時間:(s/number)")
