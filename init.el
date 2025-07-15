@@ -9,27 +9,14 @@
 
 (unless package-archive-contents
   (package-refresh-contents))
+
 (when (not (package-installed-p 'use-package))
   (package-install 'use-package))
+
 (require 'use-package)
 
-(use-package evil
-	     :ensure t
-	     :config
-	     (evil-mode 1))
-
-(use-package evil-surround
-  :ensure t
-  :config
-  (global-evil-surround-mode 1))
-
-(use-package evil-org
-  :ensure t
-  :after org
-  :hook (org-mode . (lambda () evil-org-mode))
-  :config
-  (require 'evil-org-agenda)
-  (evil-org-agenda-set-keys))
+(use-package paredit
+  :ensure t)
 
 (use-package company
   :ensure t
@@ -60,24 +47,6 @@
 (defun generate-random (keta)
   (+ (random (- (* 9 (expt 10 (- keta 1))) 1)) (expt 10 (- keta 1))))
 
-;; (defun anzan (keta kaisu second)
-;;   (interactive "n桁数:\nn回数:\nn表示時間:(s/number)")
-;;   (let* ((random-list (mapcar 'generate-random (make-list kaisu keta)))
-;; 	 (sum (apply '+ random-list))
-;; 	 (buf (get-buffer-create "Anzan")))
-;;     (switch-to-buffer buf)
-;;     (erase-buffer)
-;;     (sit-for 1)
-;;     (dolist (random-number random-list)
-;;       (insert (int-to-string random-number))
-;;       (sit-for second)
-;;       (erase-buffer)
-;;       (sit-for 0.05))
-;;     (if (= (read-number "答え:") sum)
-;;       (insert "正解")
-;;       (insert (format "不正解だ。練習したまえ。(正解は「%d」)" sum)))))
-
-
 (defun anzan (keta kaisu second)
   (interactive "n桁数:\nn回数:\nn表示時間:(s/number)")
   (let* ((random-list (mapcar 'generate-random (make-list kaisu keta)))
@@ -96,7 +65,6 @@
 (defun anzan-loop (keta kaisu second)
   (interactive "n桁数:\nn回数:\nn表示時間:(s/number)")
   (anzan keta kaisu second)
-  (message "Please press Enter(or any keys) to continue...")
   (read-char)
   (anzan-loop keta kaisu second))
 
