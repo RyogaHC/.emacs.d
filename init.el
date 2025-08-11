@@ -15,14 +15,17 @@
 
 (require 'use-package)
 
+(use-package elfeed
+  :ensure t)
+
 ;; Evil 本体
 (use-package evil
   :ensure t
   :init
   (setq evil-want-C-u-scroll t) ;; C-u で上にスクロール
-  (setq evil-want-C-i-jump t)   ;; C-i を jump forward にする（通常は tab に取られる
+  (setq evil-want-C-i-jump t) ;; C-i を jump forward にする（通常は tab に取られる
   (setq evil-undo-system 'undo-redo) ;; Emacs 28以降で追加された新しいundo機構
-  (setq evil-want-integration t) ;; 特定のEmacsパッケージと連携
+  (setq evil-want-integration t)     ;; 特定のEmacsパッケージと連携
   (setq evil-want-keybinding nil) ;; evil-collectionと併用する場合は必ずnil
   :config
   (evil-mode 1))
@@ -104,11 +107,22 @@
   (setq default-input-method "japanese-skk"))
 					;(setq skk-use-act t))
 
+(use-package lsp-mode
+  :ensure t)
+
+(use-package lsp-java
+  :ensure t)
+(add-hook 'java-mode-hook #'lsp)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(elfeed-feeds
+   '("https://www.reddit.com/r/biology/.rss"
+     "https://www.reddit.com/r/technology/.rss"
+     "https://www.reddit.com/r/science/.rss"))
  '(package-selected-packages nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -175,9 +189,24 @@
 ;;   (let ((a (reverse (digits-of number))))
 ;;     ))
 
+(defun log-words-read-to-csv ()
+  "Count words in the current buffer and log them with the date to a CSV file."
+  (interactive)
+  (let* ((words (count-words (point-min) (point-max)))
+         (date (format-time-string "%Y/%m/%d"))
+         (log-line (format "%d, %s\n" words date))
+         (log-file "~/org/word-reading-log.csv")) ; You can change the file path here
+    (with-temp-buffer
+      (insert log-line)
+      (append-to-file (point-min) (point-max) log-file))
+    (message "Logged %d words read on %s" words date)))
+
+(global-set-key (kbd "C-c w") 'log-words-read-to-csv)
+
+(setq inhibit-startup-screen t)
+(setq browse-url-browser-function 'eww-browse-url)
 (global-display-line-numbers-mode 1)
 (electric-pair-mode 1)
-(setq inhibit-startup-screen t)
 (display-time-mode 1)
 (tool-bar-mode -1)
 (menu-bar-mode -1)
